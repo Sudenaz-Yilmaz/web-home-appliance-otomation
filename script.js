@@ -25,23 +25,35 @@ class SmartDevice {
 let devices = [];
 
 async function yeniCihazEkle(hazirVeri = null) {
-    const input = document.getElementById("esyaInput");
-    const list = document.getElementById("sonucListesi");
+  const input = document.getElementById("esyaInput");
+  const list = document.getElementById("sonucListesi");
 
-    let deviceData;
-    if (hazirVeri) {
-        deviceData = hazirVeri;
-    } else {
-        if (!input.value.trim()) return;
-        deviceData = { n: input.value, c: "Genel", s: 10 };
+  let deviceData;
+  if (hazirVeri) {
+    deviceData = hazirVeri;
+  } else {
+    let isim = input.value.trim();
+    if (isim === "") return;
+
+    let kategori = "General";
+    let stok = 10;
+
+    if (isim.toLowerCase().includes("buzdolabı")) {
+      kategori = "Kitchen";
+      stok = 3;
+    } else if (isim.toLowerCase().includes("ütü")) {
+      kategori = "Bedroom";
+      stok = 2;
     }
+    deviceData = { n: isim, c: kategori, s: stok };
+  }
 
-    const device = new SmartDevice(deviceData);
-    await device.connect();
-    devices.push(device);
-    
-    list.innerHTML = devices.map(d => d.render()).join("");
-    if (!hazirVeri) input.value = "";
+  const device = new SmartDevice(deviceData);
+  await device.connect();
+  devices.push(device);
+
+  list.innerHTML = devices.map(d => d.render()).join("");
+  if (!hazirVeri) input.value = "";
 }
 
 async function loadData() {
